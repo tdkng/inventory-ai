@@ -1,10 +1,15 @@
-from models.schemas import InventoryPosition, PurchaseOrder
+import sys
+sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/models/')
+
+from schemas import InventoryPosition, PurchaseOrder
+from typing import Dict, Any
 import requests
 
 class ERPClient:
-    def __init__(self, base_url, api_key):
+    def __init__(self, base_url, api_key, timeout=10):
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
+        self.timeout = timeout
 
     def fetch_inventory(self) -> list[InventoryPosition]:
         raw = self._get("/inventory")
