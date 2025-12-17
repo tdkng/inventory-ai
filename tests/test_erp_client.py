@@ -7,7 +7,7 @@ sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/services/'
 sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/models/')
 
 from erp_client import ERPClient
-from schemas import InventoryPosition, PurchaseOrder
+from schemas import InventoryPosition, PurchaseOrder, UsageRecord
 import requests
 
 
@@ -84,14 +84,16 @@ class TestFetchPurchaseOrders:
                     "poNumber": "PO-001",
                     "partNumber": "PART-001",
                     "orderQty": 50,
-                    "orderDate": "2025-12-15",
+                    "status": "OPEN",
+                    "expectedReceiptDate": "2025-12-20",
                     "customer": "ACME Corp"
                 },
                 {
                     "poNumber": "PO-002",
                     "partNumber": "PART-002",
                     "orderQty": 25,
-                    "orderDate": "2025-12-16",
+                    "status": "RECEIVED",
+                    "expectedReceiptDate": "2025-12-18",
                     "customer": "TechCorp Inc"
                 }
             ]
@@ -105,7 +107,9 @@ class TestFetchPurchaseOrders:
         assert result[0].po_number == "PO-001"
         assert result[0].part_number == "PART-001"
         assert result[0].order_qty == 50
+        assert result[0].status == "OPEN"
         assert result[1].customer == "TechCorp Inc"
+        assert result[1].status == "RECEIVED"
 
     def test_fetch_purchase_orders_empty_response(self, erp_client):
         """Test that fetch_purchase_orders handles missing or empty purchaseOrders."""
@@ -125,6 +129,56 @@ class TestFetchPurchaseOrders:
             erp_client.fetch_purchase_orders()
         
         mock_get.assert_called_once_with("/purchase-orders")
+
+
+class TestFetchUsage:
+    """Tests for fetch_usage() method."""
+
+    def test_fetch_usage_returns_list_of_usage_records(self, erp_client):
+        """Test that fetch_usage parses JSON and returns UsageRecord objects."""
+        mock_response = {
+            "usageRecords": [
+                {
+                    "partNumber": "PART-001",
+                    "quantityUsed": 15,
+                    "usageDate": "2025-12-14"
+                },
+                {
+                    "partNumber": "PART-002",
+                    "quantityUsed": 8,
+                    "usageDate": "2025-12-15"
+                }
+            ]
+        }
+        
+        with patch.object(erp_client, '_get', return_value=mock_response):
+            result = erp_client.fetch_usage()
+        
+        assert len(result) == 2
+        assert all(isinstance(usage, UsageRecord) for usage in result)
+        assert result[0].part_number == "PART-001"
+        assert result[0].quantity_used == 15
+        assert result[0].usage_date == "2025-12-14"
+        assert result[1].part_number == "PART-002"
+
+    def test_fetch_usage_empty_response(self, erp_client):
+        """Test that fetch_usage handles missing or empty usageRecords."""
+        mock_response = {}
+        
+        with patch.object(erp_client, '_get', return_value=mock_response):
+            result = erp_client.fetch_usage()
+        
+        assert isinstance(result, list)
+        assert len(result) == 0
+
+    def test_fetch_usage_calls_get_with_correct_path(self, erp_client):
+        """Test that fetch_usage calls _get with the correct endpoint."""
+        mock_response = {"usageRecords": []}
+        
+        with patch.object(erp_client, '_get', return_value=mock_response) as mock_get:
+            erp_client.fetch_usage()
+        
+        mock_get.assert_called_once_with("/usage-records")
 
 
 class TestGetMethod:

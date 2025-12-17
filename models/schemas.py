@@ -1,5 +1,3 @@
-# uses pydantic for defining schema
-
 from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import Optional
@@ -18,7 +16,7 @@ class InventoryPosition(BaseModel):
     on_hand_qty: int = Field(..., description="The quantity of the part in warehouse")
     allocated_qty: int = Field(..., description="The quantity of the part allocated for orders")
     available_qty: int = Field(..., description="The quantity of the part available for new orders")
-    last_updated: datetime = Field(..., description="The last updated timestamp for the inventory position")
+    last_updated: str = Field(..., description="The last updated timestamp for the inventory position")
 
 # usage endpoint
 class UsageRecord(BaseModel):
@@ -31,5 +29,6 @@ class PurchaseOrder(BaseModel):
     po_number: str = Field(..., description="The unique identifier for the purchase order")
     part_number: str = Field(..., description="The unique identifier for the part ordered")
     order_qty: int = Field(..., description="The quantity of the part ordered")
-    order_date: str = Field(..., description="The date when the order was placed")
+    status: str = Field(..., description="The current status of the purchase order")
+    expected_receipt_date: str = Field(..., description="The expected receipt date for the order")
     customer: str = Field(..., description="The customer who purchased the part")
