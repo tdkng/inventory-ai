@@ -4,7 +4,7 @@ from pipelines.silver import inventory_to_silver, usage_to_silver
 from pipelines.gold import compute_inventory_risk
 
 def run_pipeline():
-    erp = ERPClient(...)
+    erp = ERPClient("http://localhost:8000/", "test-key")
     
     raw_inventory = ingest_inventory(erp)
     raw_purchase_orders = ingest_purchase_orders(erp)
@@ -17,3 +17,8 @@ def run_pipeline():
     )
 
     return gold_inventory
+
+if __name__ == "__main__":
+    gold = run_pipeline()
+    print(gold)
+

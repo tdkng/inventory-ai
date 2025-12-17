@@ -48,6 +48,7 @@ class ERPClient:
             "Authorization": f"Bearer {self.api_key}",
             "Accept": "application/json"
         }
+        print(url)
 
         try:
             response = requests.get(
