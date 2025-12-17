@@ -8,6 +8,14 @@ def ingest_inventory(erp_client: ERPClient) -> dict:
     )
     return {"items": [item.dict() for item in raw_inventory]}
 
+def ingest_usage(erp_client: ERPClient) -> dict:
+    raw_usage = erp_client.fetch_usage()
+    erp_client._store_bronze(
+        payload={"usageRecords": [usage.dict() for usage in raw_usage]},
+        name="usage"
+    )
+    return {"usageRecords": [usage.dict() for usage in raw_usage]}
+
 
 def ingest_purchase_orders(erp_client: ERPClient) -> dict:
     raw_purchase_orders = erp_client.fetch_purchase_orders()

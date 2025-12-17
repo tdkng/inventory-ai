@@ -1,9 +1,10 @@
 import sys
 sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/models/')
 
-from schemas import InventoryPosition, PurchaseOrder
+from schemas import InventoryPosition, UsageRecord, PurchaseOrder
 from typing import Dict, Any
-import datetime
+from datetime import datetime
+import json
 import requests
 
 class ERPClient:
@@ -26,7 +27,18 @@ class ERPClient:
             )
             for item in raw["items"]
         ]
-    
+
+    def fetch_usage(self) -> list[UsageRecord]:
+        raw = self._get("/usage-records")
+        return [
+            UsageRecord(
+                part_number=usage["partNumber"],
+                quantity_used=usage["quantityUsed"],
+                usage_date=usage["usageDate"]
+            )
+            for usage in raw.get("usageRecords", [])
+        ]
+
     
     def fetch_purchase_orders(self) -> list[PurchaseOrder]:
         raw = self._get("/purchase-orders")
@@ -48,7 +60,6 @@ class ERPClient:
             "Authorization": f"Bearer {self.api_key}",
             "Accept": "application/json"
         }
-        print(url)
 
         try:
             response = requests.get(
@@ -71,7 +82,7 @@ class ERPClient:
         
 
     def _store_bronze(self, payload: dict, name: str):
-        ts = datetime.utcnow().isoformat()
+        ts = datetime.now().isoformat()
         path = f"data/bronze/{name}_{ts}.json"
         with open(path, "w") as f:
             json.dump(payload, f, indent=2)

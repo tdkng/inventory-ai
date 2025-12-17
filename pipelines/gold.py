@@ -1,6 +1,6 @@
 import pandas as pd
 
-def compute_inventory_risk(silver_inventory, silver_usage) -> pd.DataFrame:
+def compute_inventory_risk(silver_inventory, silver_usage, silver_purchase_orders) -> pd.DataFrame:
     return pd.DataFrame()
 
 

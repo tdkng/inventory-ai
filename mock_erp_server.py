@@ -31,6 +31,38 @@ def inventory():
         ]
     })
 
+@app.route("/usage-records", methods=["GET"])
+def usage_records():
+    return jsonify({
+        "usageRecords": [
+            {
+                "partNumber": "PART-001",
+                "quantityUsed": 15,
+                "usageDate": "2025-12-14"
+            },
+            {
+                "partNumber": "PART-001",
+                "quantityUsed": 20,
+                "usageDate": "2025-12-15"
+            },
+            {
+                "partNumber": "PART-002",
+                "quantityUsed": 8,
+                "usageDate": "2025-12-14"
+            },
+            {
+                "partNumber": "PART-002",
+                "quantityUsed": 12,
+                "usageDate": "2025-12-15"
+            },
+            {
+                "partNumber": "PART-001",
+                "quantityUsed": 10,
+                "usageDate": "2025-12-16"
+            }
+        ]
+    })
+
 @app.route("/purchase-orders", methods=["GET"])
 def purchase_orders():
     return jsonify({

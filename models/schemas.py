@@ -18,7 +18,7 @@ class InventoryPosition(BaseModel):
     on_hand_qty: int = Field(..., description="The quantity of the part in warehouse")
     allocated_qty: int = Field(..., description="The quantity of the part allocated for orders")
     available_qty: int = Field(..., description="The quantity of the part available for new orders")
-    last_updated: datetime = Field(..., description="The last updated timestamp for the inventory position")
+    last_updated: str = Field(..., description="The last updated timestamp for the inventory position")
 
 # usage endpoint
 class UsageRecord(BaseModel):
