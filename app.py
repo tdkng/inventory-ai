@@ -1,12 +1,12 @@
-from pipelines.bronze import ingest_inventory, ingest_usage, ingest_purchase_orders, ingest_parts
-from pipelines.silver import inventory_to_silver, usage_to_silver, purchase_orders_to_silver, parts_to_silver
-from pipelines.gold import build_inventory_risk_gold
-from services.ai_client import AIInsightService
+import streamlit as st
+
 from services.erp_client import ERPClient
 from services.inventory_logic import InventoryDecisionEngine
-from dotenv import load_dotenv
-import os
+from pipelines.bronze import ingest_inventory, ingest_usage, ingest_purchase_orders, ingest_parts
+from pipelines.silver import inventory_to_silver, usage_to_silver, purchase_orders_to_silver, parts_to_silver
+from pipelines.gold import build_inventory_risk_gold, build_purchasing_recommendations_gold
 
+@st.cache_data
 def run_pipeline():
     erp = ERPClient("http://localhost:8000/", "test-key")
     
@@ -28,22 +28,29 @@ def run_pipeline():
         silver_parts
     )
 
-    print(gold_inventory)
+    gold_purchasing = build_purchasing_recommendations_gold(
+        InventoryDecisionEngine(),
+        silver_inventory,
+        silver_usage,
+        silver_parts
+    )
 
-    load_dotenv()
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    if OPENAI_API_KEY:
-        ai_service = AIInsightService(api_key=OPENAI_API_KEY)
-        for _, row in gold_inventory.iterrows():
-            explanation = ai_service.explain_inventory_risk(row.to_dict())
-            print(f"Part {row['part_number']} Risk Explanation: {explanation}")
-    else:
-        print("\n  OPENAI_API_KEY not set. Skipping AI insights. Set the environment variable to enable:")
-        print("   export OPENAI_API_KEY='sk-...'")
+    # print(gold_inventory)
+    # print(gold_purchasing)
 
-    return gold_inventory
+    return {
+        "inventory": gold_inventory,
+        "purchasing": gold_purchasing,
+    }
+
 
 if __name__ == "__main__":
-    gold = run_pipeline()
+    st.set_page_config(page_title="Inventory AI", layout="wide")
 
+    st.title("Inventory Decision Support")
+    gold = run_pipeline()
+    st.success("Data loaded")
+
+    st.session_state["gold_inventory"] = gold["inventory"]
+    st.session_state["gold_purchasing"] = gold["purchasing"]
 
