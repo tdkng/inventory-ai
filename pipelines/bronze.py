@@ -25,3 +25,12 @@ def ingest_purchase_orders(erp_client: ERPClient) -> dict:
     )
     return {"purchaseOrders": [po.dict() for po in raw_purchase_orders]}
 
+
+def ingest_parts(erp_client: ERPClient) -> dict:
+    raw_parts = erp_client.fetch_parts()
+    erp_client._store_bronze(
+        payload={"parts": [part.dict() for part in raw_parts]},
+        name="parts"
+    )
+    return {"parts": [part.dict() for part in raw_parts]}
+

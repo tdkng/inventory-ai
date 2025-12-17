@@ -8,6 +8,27 @@ app = Flask(__name__)
 def index():
     return "Mock ERP Server is running."
 
+@app.route("/parts", methods=["GET"])
+def parts():
+    return jsonify({
+        "parts": [
+            {
+                "partNumber": "PART-001",
+                "description": "Widget A",
+                "unitPrice": 25.50,
+                "unitOfMeasure": "each",
+                "leadTimeDays": 5
+            },
+            {
+                "partNumber": "PART-002",
+                "description": "Gadget B",
+                "unitPrice": 15.75,
+                "unitOfMeasure": "each",
+                "leadTimeDays": 7
+            }
+        ]
+    })
+
 @app.route("/inventory", methods=["GET"])
 def inventory():
     return jsonify({
@@ -71,15 +92,25 @@ def purchase_orders():
                 "poNumber": "PO-001",
                 "partNumber": "PART-001",
                 "orderQty": 50,
-                "orderDate": "2025-12-15",
+                "status": "OPEN",
+                "expectedReceiptDate": "2025-12-20",
                 "customer": "ACME Corp"
             },
             {
                 "poNumber": "PO-002",
                 "partNumber": "PART-002",
                 "orderQty": 25,
-                "orderDate": "2025-12-16",
+                "status": "RECEIVED",
+                "expectedReceiptDate": "2025-12-18",
                 "customer": "TechCorp Inc"
+            },
+            {
+                "poNumber": "PO-003",
+                "partNumber": "PART-001",
+                "orderQty": 75,
+                "status": "OPEN",
+                "expectedReceiptDate": "2025-12-22",
+                "customer": "ACME Corp"
             }
         ]
     })

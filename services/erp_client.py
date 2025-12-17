@@ -1,7 +1,7 @@
 import sys
 sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/models/')
 
-from schemas import InventoryPosition, UsageRecord, PurchaseOrder
+from schemas import InventoryPosition, UsageRecord, PurchaseOrder, Part
 from typing import Dict, Any
 from datetime import datetime
 import json
@@ -12,6 +12,19 @@ class ERPClient:
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.timeout = timeout
+
+    def fetch_parts(self) -> list[Part]:
+        raw = self._get("/parts")
+        return [
+            Part(
+                part_number=part["partNumber"],
+                description=part.get("description"),
+                unit_price=part["unitPrice"],
+                unit_of_measure=part["unitOfMeasure"],
+                lead_time_days=part.get("leadTimeDays")
+            )
+            for part in raw.get("parts", [])
+        ]
 
 
     def fetch_inventory(self) -> list[InventoryPosition]:
@@ -47,7 +60,8 @@ class ERPClient:
                 po_number=po["poNumber"],
                 part_number=po["partNumber"],
                 order_qty=po["orderQty"],
-                order_date=po["orderDate"],
+                status=po["status"],
+                expected_receipt_date=po["expectedReceiptDate"],
                 customer=po["customer"]
             )
             for po in raw.get("purchaseOrders", [])

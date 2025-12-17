@@ -84,14 +84,16 @@ class TestFetchPurchaseOrders:
                     "poNumber": "PO-001",
                     "partNumber": "PART-001",
                     "orderQty": 50,
-                    "orderDate": "2025-12-15",
+                    "status": "OPEN",
+                    "expectedReceiptDate": "2025-12-20",
                     "customer": "ACME Corp"
                 },
                 {
                     "poNumber": "PO-002",
                     "partNumber": "PART-002",
                     "orderQty": 25,
-                    "orderDate": "2025-12-16",
+                    "status": "RECEIVED",
+                    "expectedReceiptDate": "2025-12-18",
                     "customer": "TechCorp Inc"
                 }
             ]
@@ -105,7 +107,9 @@ class TestFetchPurchaseOrders:
         assert result[0].po_number == "PO-001"
         assert result[0].part_number == "PART-001"
         assert result[0].order_qty == 50
+        assert result[0].status == "OPEN"
         assert result[1].customer == "TechCorp Inc"
+        assert result[1].status == "RECEIVED"
 
     def test_fetch_purchase_orders_empty_response(self, erp_client):
         """Test that fetch_purchase_orders handles missing or empty purchaseOrders."""
