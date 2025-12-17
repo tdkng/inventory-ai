@@ -2,7 +2,7 @@ import pandas as pd
 from datetime import datetime
 
 class InventoryDecisionEngine:
-    def compute_inventory_risk(silver_inventory, silver_usage, silver_purchase_orders, silver_parts) -> pd.DataFrame:
+    def compute_inventory_risk(self, silver_inventory, silver_usage, silver_purchase_orders, silver_parts) -> pd.DataFrame:
         # merge inventory with parts to get lead_time_days
         df = silver_inventory.merge(
             silver_parts[["part_number", "lead_time_days"]],
@@ -87,7 +87,7 @@ class InventoryDecisionEngine:
         ]
 
 
-    def generate_purchasing_recommendations(silver_inventory, silver_usage, silver_parts, buffer_days=10):
+    def generate_purchasing_recommendations(self, silver_inventory, silver_usage, silver_parts, buffer_days=10):
         # merge inventory with parts to get lead_time_days
         df = silver_inventory.merge(
             silver_parts[["part_number", "lead_time_days"]],
