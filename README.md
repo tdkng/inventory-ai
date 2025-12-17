@@ -7,4 +7,4 @@ goals:
 - deterministic and auditable business logic
 
 architecture:
-erp api --extract--> bronze (raw JSON) --validate--> silver (clean tables) --bus-logic--> gold (metrics + signals) --> streamlit ui --> open ai insight
+erp api --extract--> bronze --validate--> silver --bus-logic--> gold --> open ai insight --> streamlit ui
