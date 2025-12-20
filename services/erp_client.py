@@ -1,11 +1,9 @@
-import sys
-sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/models/')
-
-from schemas import InventoryPosition, UsageRecord, PurchaseOrder, Part
 from typing import Dict, Any
 from datetime import datetime
 import json
 import requests
+
+from models.schemas import InventoryPosition, UsageRecord, PurchaseOrder, Part
 
 class ERPClient:
     def __init__(self, base_url, api_key, timeout=10):

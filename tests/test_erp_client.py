@@ -2,12 +2,8 @@ import pytest
 from unittest.mock import Mock, patch
 from datetime import datetime
 
-import sys
-sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/services/')
-sys.path.append('/Users/timothynguyen/Documents/projects/inventory-ai/models/')
-
-from erp_client import ERPClient
-from schemas import InventoryPosition, PurchaseOrder, UsageRecord
+from services.erp_client import ERPClient
+from models.schemas import InventoryPosition, PurchaseOrder, UsageRecord
 import requests
 
 
